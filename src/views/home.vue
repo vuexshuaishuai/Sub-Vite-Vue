@@ -2,20 +2,20 @@
     <div class="home">
         123
         <p>456</p>
-        <div>{{store.count}}</div>
+        <div>{{store.changeCount}}</div>
+        <div>{{token}}</div>
         <button type="button" @click="doChange()">点击</button>
     </div>
 </template>
 
 <script lang="ts" setup>
     import { useStore } from "@/store";
+    import { storeToRefs } from "pinia";
 
     const store = useStore();
-
     console.log("输出", import.meta.env);
-
     const doChange = () => {
-        store.count++
+        store.count = 5;
     }
 
 </script>
