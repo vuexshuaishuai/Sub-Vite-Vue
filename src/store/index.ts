@@ -1,9 +1,11 @@
 import { defineStore } from "pinia";
 
-export const useStore = defineStore('useStore', {
+export const useStore = defineStore({
+    id: "useStore",
     state: () => {
         return {
             count: 1,
+            firstName: "Pinia",
             token: "Sophia",
         }
     },
@@ -15,5 +17,12 @@ export const useStore = defineStore('useStore', {
     },
     actions: {
 
+    },
+    persist: {
+        enabled: true,
+        strategies: [
+            {storage: localStorage, paths: ["count", "firstName"]},
+            {storage: sessionStorage, paths: ["token"]},
+        ]
     }
 })

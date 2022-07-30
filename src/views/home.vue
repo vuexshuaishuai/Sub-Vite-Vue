@@ -3,7 +3,7 @@
         123
         <p>456</p>
         <div>{{store.changeCount}}</div>
-        <div>{{token}}</div>
+        <div>{{store.token}}</div>
         <button type="button" @click="doChange()">点击</button>
     </div>
 </template>
@@ -15,7 +15,10 @@
     const store = useStore();
     console.log("输出", import.meta.env);
     const doChange = () => {
-        store.count = 5;
+        store.$patch({
+            count: 5,
+            token: "David"
+        })
     }
 
 </script>
