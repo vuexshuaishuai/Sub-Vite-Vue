@@ -6,7 +6,6 @@
 
 <script lang="ts" setup>
     import { ref, onMounted } from "vue";
-
     onMounted(() => {
         new AMap.Map("mapContainer", {
             

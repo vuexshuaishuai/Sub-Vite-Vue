@@ -1,10 +1,14 @@
 import { defineConfig } from 'vite'
 import { resolve } from "path";
 import vue from '@vitejs/plugin-vue'
+import resolveExternalsPlugin from "vite-plugin-resolve-externals";
 
 export default defineConfig({
   plugins: [
     vue(),
+    resolveExternalsPlugin({
+      AMap: "AMap"
+    })
   ],
   resolve: {
     alias: {
@@ -30,7 +34,7 @@ export default defineConfig({
     host: "test.daka.com",
     port: 5175,
     proxy: {
-
+      
     }
   }
 })
