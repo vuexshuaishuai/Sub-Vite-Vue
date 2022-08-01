@@ -27,6 +27,7 @@ export default defineConfig({
   //服务配置
   server: {
     open: true,
+    host: "test.daka.com",
     port: 5175,
     proxy: {
 

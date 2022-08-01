@@ -1,14 +1,18 @@
 import axios from "axios";
 
-const services = axios.create({
+const request = axios.create({
     //基础路径
     baseURL: "/api",
     //请求超时时间
-    timeout: 15000
+    timeout: 15000,
+    //请求头: 默认 JSON(form) 传参
+    headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
 });
 
 /* 请求拦截器 */
-services.interceptors.request.use(
+request.interceptors.request.use(
     config => {
         return config;
     },
@@ -18,7 +22,7 @@ services.interceptors.request.use(
 );
 
 /* 响应拦截器 */
-services.interceptors.response.use(
+request.interceptors.response.use(
     response => {
         return response.data;
     },
@@ -27,4 +31,4 @@ services.interceptors.response.use(
     }
 );
 
-export default services;
+export default request;

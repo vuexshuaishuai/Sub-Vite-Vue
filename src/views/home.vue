@@ -1,33 +1,28 @@
 <template>
     <div class="home">
-        123
-        <p>456</p>
-        <div>{{store.changeCount}}</div>
-        <div>{{store.token}}</div>
-        <button type="button" @click="doChange()">点击</button>
+        <div id="mapContainer"></div>
     </div>
 </template>
 
 <script lang="ts" setup>
-    import { useStore } from "@/store";
-    import { storeToRefs } from "pinia";
+    import { ref, onMounted } from "vue";
 
-    const store = useStore();
-    console.log("输出", import.meta.env);
-    const doChange = () => {
-        store.$patch({
-            count: 5,
-            token: "David"
+    onMounted(() => {
+        new AMap.Map("mapContainer", {
+            
         })
-    }
+    })
 
 </script>
 
 <style lang="scss" scoped>
 .home{
-    color: red;
-    p{
-        color: gold;
-    }
+    width: 100%;
+    height: 100%;
+}
+/* 地图容器 */
+#mapContainer{
+    width: 100%;
+    height: 100%;
 }
 </style>
