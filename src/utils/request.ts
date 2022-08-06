@@ -1,15 +1,30 @@
-import axios from "axios";
+import axios, { AxiosResponse, AxiosError, AxiosRequestConfig  } from "axios";
+import { ElMessage } from "element-plus";
+import { PropType } from "vue";
 
-const request = axios.create({
-    //基础路径
-    baseURL: "/api",
-    //请求超时时间
+/* 封装: 消息提示 */
+const message = (mesg: string, type?: 'success' | 'error' | 'warning' | 'info') => {
+    ElMessage({
+        message: mesg,
+        type: type || 'error',
+        duration: 1500, 
+    })
+}
+
+/* axios 默认配置 */
+const defaultConfig: AxiosRequestConfig = {
+    //默认接口前缀
+    baseURL: "/exchange-pc",
+    //请求超时时间: 15秒
     timeout: 15000,
-    //请求头: 默认 JSON(form) 传参
+    //请求头
     headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
+        "Content-Type": "application/json"
     }
-});
+}
+
+/* 定义axios实例 */
+const request = axios.create(defaultConfig);
 
 /* 请求拦截器 */
 request.interceptors.request.use(
@@ -23,10 +38,11 @@ request.interceptors.request.use(
 
 /* 响应拦截器 */
 request.interceptors.response.use(
-    response => {
+    (response: AxiosResponse) => {
+        console.log(response);
         return response.data;
     },
-    error => {
+    (error: AxiosError) => {
         return Promise.reject(error);
     }
 );

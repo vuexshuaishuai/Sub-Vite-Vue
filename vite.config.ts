@@ -34,7 +34,12 @@ export default defineConfig({
     host: "test.daka.com",
     port: 5175,
     proxy: {
-      
+      "/exchange-pc": {
+        //测试环境地址
+        target: "http://172.17.47.100/",
+        ws: true,
+        changeOrigin: true
+      }
     }
   }
 })
