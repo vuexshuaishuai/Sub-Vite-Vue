@@ -1,6 +1,6 @@
 import axios, { AxiosResponse, AxiosError, AxiosRequestConfig  } from "axios";
 import { ElMessage } from "element-plus";
-import { PropType } from "vue";
+import { getToken } from "@/utils/subCookie";
 
 /* 封装: 消息提示 */
 const message = (mesg: string, type?: 'success' | 'error' | 'warning' | 'info') => {
@@ -19,7 +19,8 @@ const defaultConfig: AxiosRequestConfig = {
     timeout: 15000,
     //请求头
     headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "token": getToken()
     }
 }
 
@@ -39,7 +40,6 @@ request.interceptors.request.use(
 /* 响应拦截器 */
 request.interceptors.response.use(
     (response: AxiosResponse) => {
-        console.log(response);
         return response.data;
     },
     (error: AxiosError) => {

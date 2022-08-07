@@ -98,7 +98,11 @@
     import { ref, reactive, onMounted, nextTick } from "vue";
     import { login } from "@/api/login";
     import { setToken } from "@/utils/subCookie";
+    import { useRouter } from "vue-router";
     import "@/plugins/user_center_login.js";
+    //公共资源定义
+    const router = useRouter();  //路由
+
     /* 定义: 部分静态资源(方便维护)  */
     const loginPhone: string = "400-815-5656";
 
@@ -136,7 +140,8 @@
                 userId: userId,
             }).then(res => {
                 if(res.code === 0){
-                    setToken(res.data.token)
+                    setToken(res.data.token);
+                    router.push("/home")
                 }
             })
         }
@@ -158,7 +163,6 @@
             innerDom.style.transform = `scale(${styleScale})`;
         })
     }
-    
     onMounted(() => {
         //首先: 开启适配
         getCurrentClientSize();

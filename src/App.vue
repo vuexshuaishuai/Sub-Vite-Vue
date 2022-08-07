@@ -1,12 +1,6 @@
 <template>
   <div class="app-container">
-      <router-view v-slot="{ Component }">
-        <transition name="fade-transform" mode="out-in">
-          <keep-alive>
-            <component :is="Component" :key="$route.name"></component>
-          </keep-alive>
-        </transition>
-      </router-view>
+    <router-view></router-view>
   </div>
 </template>
 
