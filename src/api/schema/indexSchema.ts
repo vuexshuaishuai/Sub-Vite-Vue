@@ -3,5 +3,5 @@
 /* 接口返回数据类型定义 */
 export interface Rows<T> {
     code: number;
-    data: T;
+    data: Array<T>;
 }

@@ -22,6 +22,11 @@ export interface VehicleListItem {
     //坐标
     lon?: number;
     lat?: number;
+    groupCreateTime?: number;
+    //所属分组id
+    groupId?: string;
+    //所属分组名称
+    groupName?: string;
     mileage?: number;
     nowAreaCode?: string;
     head?: number;
