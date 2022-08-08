@@ -17,6 +17,8 @@ export interface VehicleListItem {
     type: number;
     //到期时间
     expirationTime?: number;
+    //是否到期
+    timeout?: boolean;
     //速度
     gpsSpeed?: number;
     //坐标
