@@ -31,12 +31,15 @@ export default defineConfig({
   //服务配置
   server: {
     open: true,
-    host: "test.daka.com",
+    //切换到生产环境需要将host注释
+    // host: "test.daka.com",
     port: 5175,
     proxy: {
       "/exchange-pc": {
         //测试环境地址
-        target: "http://172.17.47.100/",
+        // target: "http://172.17.47.100/",
+        //生产环境地址
+        target: "https://daka.95155.com",
         ws: true,
         changeOrigin: true
       }

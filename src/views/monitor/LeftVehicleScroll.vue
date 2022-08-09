@@ -42,12 +42,12 @@
     import { ref, defineProps } from "vue";
     import { Search, Refresh } from '@element-plus/icons-vue'
     import { TabPanelName } from "element-plus";
-    import { VehicleListItem } from "@/api/schema/monitorSchema";
+    import { TruckItem } from "@/api/schema/monitorSchema";
 
     //传值接收
     const props = defineProps({
         vehicleList: {
-            type: Array<VehicleListItem>
+            type: Array<TruckItem>
         }
     })
 
@@ -173,6 +173,7 @@
     flex: 1;
     padding: 20px;
     font-size: 16px;
+    overflow: auto;
     li{
         margin-bottom: 20px;
         cursor: pointer;

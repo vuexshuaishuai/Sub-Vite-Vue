@@ -99,7 +99,7 @@
     import { login } from "@/api/login";
     import { setToken } from "@/utils/subCookie";
     import { useRouter } from "vue-router";
-    import "@/plugins/user_center_login.js";
+    // import "@/plugins/user_center_login.js";
     //公共资源定义
     const router = useRouter();  //路由
 
@@ -175,7 +175,8 @@
         });
         (window as any).adminUserCenter.openAdminModal({
             //商户号
-            merchantcode: "20191210131730365779",
+            // merchantcode: "20191210131730365779",
+            merchantcode: "20191219135518690811",
             position: "0",
             right: "0",
             top: "center",
@@ -326,15 +327,6 @@
     }
     
 }
-
-
-
-
-
-
-
-
-
 
 /* 容器: 底部 */
 .login-footer{
