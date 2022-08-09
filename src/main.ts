@@ -6,7 +6,6 @@ import piniaPersist from "pinia-plugin-persist";
 import ElementPlus from "element-plus";
 import 'normalize.css/normalize.css';
 import 'element-plus/dist/index.css';
-import 'default-passive-events'
 
 const app = createApp(App);
 const pinia = createPinia();

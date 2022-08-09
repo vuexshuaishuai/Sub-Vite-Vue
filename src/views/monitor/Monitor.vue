@@ -68,6 +68,9 @@
                     item.timeout = new Date().getTime() > (item.expirationTime || 0);
                     //解析: 车辆当前状态
                     item.status = doSeekStatus(item);
+                    //解析: 车辆速度(如果有速度就 ÷10 保留1位)
+                    item.gpsSpeed = item.gpsSpeed ? (item.gpsSpeed / 10).toFixed(0) : item.gpsSpeed;
+                    // if(item.vehicleNo == "鄂ACK166") item.status = VehicleStatus.Run;
                     //检验: 地图车辆点展示的条件 (1)未到期 (2)属于PC可查车 (3)含有坐标
                     if(!item.timeout && item.isPcSelect != 0 && item.lon && item.lat){
                         //解析: 坐标转换
@@ -79,9 +82,21 @@
                         item.cLat = tmpPos[1];
                         console.log(tmpPos);
                         //(1)绘制车牌号
-                        let vehicleContent: string = `
-                            <div class='monitor-vehicle ${item.status == VehicleStatus.Offline ? 'monitor-vehicle-offline' : ''}'>${item.vehicleNo}<div class="monitor-vehicle-triangle"></div></div>
-                        `;
+                        let vehicleContent: string = "";
+                        //行驶中: 展示
+                        if(item.status == VehicleStatus.Run){
+                            vehicleContent = `<div class="monitor-vehicle-run">
+                                                <p class="run-vehicle">${item.vehicleNo}</p>
+                                                <p class="run-speed">车速${item.gpsSpeed}km/h</p>
+                                                <div class="monitor-vehicle-triangle"></div>
+                                              </div>`
+                        }
+                        //停车|异常: 展示
+                        else{
+                            vehicleContent = `
+                                <div class='monitor-vehicle ${item.status == VehicleStatus.Offline ? 'monitor-vehicle-offline' : ''}'>${item.vehicleNo}<div class="monitor-vehicle-triangle"></div></div>
+                            `;
+                        }
                         //(2)绘制车辆点
                         let vehicleMarker = new AMap.Marker({
                             //所属地图实例
@@ -90,14 +105,16 @@
                             icon: markerIcons[item.status],
                             //坐标位置
                             position: new AMap.LngLat(item.cLon!, item.cLat!),
-                            //偏移量
+                            //偏移量: 
                             offset: new AMap.Pixel(-18, -20),
                             //鼠标hover样式
                             cursor: "pointer",
+                            // visible:true,
                         })
                         //(3)将绘制好的车牌号放在车辆点上方
                         vehicleMarker.setLabel({
-                            // offset: new AMap.Pixel(-18, -20),
+                            //行驶的车牌号比较特殊需要增加偏移量
+                            offset: item.status == VehicleStatus.Run ? new AMap.Pixel(-2, -5) : new AMap.Pixel(-2, -5),
                             content: vehicleContent,
                             direction: 'top'
                         });
@@ -165,10 +182,10 @@
         border: none;
         padding: 0;
         border-radius: 4px;
-        left: -25px !important;
-        top: -30px !important;
+        // left: -25px !important;
+        // top: -30px !important;
     }
-    /* 地图: 车辆点上方的车牌号内容 */
+    /* 地图: 车辆点上方的车牌号内容(停驶、异常) */
     :deep(.monitor-vehicle){
         padding: 6px 10px;
         color: white;
@@ -177,6 +194,33 @@
         font-size: 14px;
         box-shadow: 0px 0px 4px 1px rgba(0,0,0,0.5000);
         position: relative;
+    }
+    /* 地图: 车辆点上方的车牌号内容(行驶) */
+    :deep(.monitor-vehicle-run){
+        position: relative;
+        box-shadow: 0px 0px 4px 1px rgba(0,0,0,0.5000);
+        border-radius: 4px;
+        //车牌
+        .run-vehicle{
+            padding: 4px 10px;
+            color: white;
+            background: #319E57;
+            font-size: 14px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        //车速
+        .run-speed{
+            width: 100%;
+            padding: 5px;
+            text-align: center;
+            font-size: 13px;
+            color: #319E57;
+        }
+        //三角
+        .monitor-vehicle-triangle{
+            border-color: white transparent transparent;
+        }
     }
     /* 地图: 车辆点的三角 */
     :deep(.monitor-vehicle-triangle){
