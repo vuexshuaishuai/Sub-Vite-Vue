@@ -3,9 +3,9 @@
         <!-- 容器: 地图 -->
         <div id="mapContainer"></div>
         <!-- 容器: 左侧滚动列表 -->
-        <div class="vehicle-scroll">
+        <!-- <div class="vehicle-scroll">
             <LeftVehicleScrollVue :vehicleList="vehicleList"></LeftVehicleScrollVue>
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -14,15 +14,16 @@
     import { getVehicleList } from "@/api/monitor";
     import { TruckItem, VehicleStatus } from "@/api/schema/monitorSchema";
     import maputil from "@/plugins/mapChange.js";
+    import axios from "axios"
     //左侧列表
     import LeftVehicleScrollVue from "@/views/monitor/LeftVehicleScroll.vue";
 
     //数据: 车辆列表
     const vehicleList = ref<Array<TruckItem>>([]);
     //数据: 地图
-    const mapContainer = ref<AMap.Map>();
+    const mapContainer = ref();
     //数据: 地图上的车辆点
-    const mapVehicleMarkers: Array<AMap.Marker> = reactive([]);
+    const mapVehicleMarkers: Array<any> = reactive([]);
 
     //静态数据接口定义: 车辆点的icon图片
     interface MarkerIcons {
@@ -55,21 +56,36 @@
 
     /* 初始化: 获取车辆列表 */
     const initVehicleList = () => {
+        console.time();
         getVehicleList({
             pageNo: 1,
             pageSize: 19999
-        }).then(res => {
+        }).then(async res => {
             if(res.code === 0){
                 console.log(res);
                 vehicleList.value = res.data;
                 let vehicleContainer: Array<TruckItem> = res.data;
+                console.timeEnd();
+                interface Districts {
+                    adcode: string;
+                    center: string;
+                    citycode: [] | string;
+                    districts: Array<Districts>;
+                    level: string;
+                    name: string;
+                }
+                let codeContainer: Array<Districts>= [];
+                await axios.get("https://restapi.amap.com/v3/config/district?key=f61e308af96def6b7613d4e87a106cc0&subdistrict=3").then(res => {
+                    console.log(res);
+                    codeContainer = res.data.districts[0].districts;
+                })
                 vehicleContainer.forEach((item, key) => {
                     //解析: 车辆是否到期
                     item.timeout = new Date().getTime() > (item.expirationTime || 0);
                     //解析: 车辆当前状态
                     item.status = doSeekStatus(item);
                     //解析: 车辆速度(如果有速度就 ÷10 保留1位)
-                    item.gpsSpeed = item.gpsSpeed ? (item.gpsSpeed / 10).toFixed(0) : item.gpsSpeed;
+                    item.gpsSpeed = item.gpsSpeed ? Number((item.gpsSpeed / 10).toFixed(0)) : item.gpsSpeed;
                     // if(item.vehicleNo == "鄂ACK166") item.status = VehicleStatus.Run;
                     //检验: 地图车辆点展示的条件 (1)未到期 (2)属于PC可查车 (3)含有坐标
                     if(!item.timeout && item.isPcSelect != 0 && item.lon && item.lat){
@@ -80,49 +96,50 @@
                         );
                         item.cLon = tmpPos[0];
                         item.cLat = tmpPos[1];
-                        console.log(tmpPos);
-                        //(1)绘制车牌号
-                        let vehicleContent: string = "";
-                        //行驶中: 展示
-                        if(item.status == VehicleStatus.Run){
-                            vehicleContent = `<div class="monitor-vehicle-run">
-                                                <p class="run-vehicle">${item.vehicleNo}</p>
-                                                <p class="run-speed">车速${item.gpsSpeed}km/h</p>
-                                                <div class="monitor-vehicle-triangle"></div>
-                                              </div>`
-                        }
-                        //停车|异常: 展示
-                        else{
-                            vehicleContent = `
-                                <div class='monitor-vehicle ${item.status == VehicleStatus.Offline ? 'monitor-vehicle-offline' : ''}'>${item.vehicleNo}<div class="monitor-vehicle-triangle"></div></div>
-                            `;
-                        }
-                        //(2)绘制车辆点
-                        let vehicleMarker = new AMap.Marker({
-                            //所属地图实例
-                            map: mapContainer.value,
-                            //车辆图标
-                            icon: markerIcons[item.status],
-                            //坐标位置
-                            position: new AMap.LngLat(item.cLon!, item.cLat!),
-                            //偏移量: 
-                            offset: new AMap.Pixel(-18, -20),
-                            //鼠标hover样式
-                            cursor: "pointer",
-                            // visible:true,
-                        })
-                        //(3)将绘制好的车牌号放在车辆点上方
-                        vehicleMarker.setLabel({
-                            //行驶的车牌号比较特殊需要增加偏移量
-                            offset: item.status == VehicleStatus.Run ? new AMap.Pixel(-2, -5) : new AMap.Pixel(-2, -5),
-                            content: vehicleContent,
-                            direction: 'top'
-                        });
-                        mapVehicleMarkers.push(vehicleMarker);
+                        // //(1)绘制车牌号
+                        // let vehicleContent: string = "";
+                        // //行驶中: 展示
+                        // if(item.status == VehicleStatus.Run){
+                        //     vehicleContent = `<div class="monitor-vehicle-run">
+                        //                         <p class="run-vehicle">${item.vehicleNo}</p>
+                        //                         <p class="run-speed">车速${item.gpsSpeed}km/h</p>
+                        //                         <div class="monitor-vehicle-triangle"></div>
+                        //                       </div>`
+                        // }
+                        // //停车|异常: 展示
+                        // else{
+                        //     vehicleContent = `
+                        //         <div class='monitor-vehicle ${item.status == VehicleStatus.Offline ? 'monitor-vehicle-offline' : ''}'>${item.vehicleNo}<div class="monitor-vehicle-triangle"></div></div>
+                        //     `;
+                        // }
+                        // //(2)绘制车辆点
+                        // let vehicleMarker = new AMap.Marker({
+                        //     //所属地图实例
+                        //     // map: mapContainer.value,
+                        //     //车辆图标
+                        //     icon: markerIcons[item.status],
+                        //     //坐标位置
+                        //     position: new AMap.LngLat(item.cLon!, item.cLat!),
+                        //     //偏移量: 
+                        //     offset: new AMap.Pixel(-18, -20),
+                        //     //鼠标hover样式
+                        //     cursor: "pointer",
+                        //     // visible:true,
+                        // })
+                        // //(3)将绘制好的车牌号放在车辆点上方
+                        // vehicleMarker.setLabel({
+                        //     //行驶的车牌号比较特殊需要增加偏移量
+                        //     offset: item.status == VehicleStatus.Run ? new AMap.Pixel(-2, -5) : new AMap.Pixel(-2, -5),
+                        //     content: vehicleContent,
+                        //     direction: 'top'
+                        // });
+                        // mapVehicleMarkers.push(vehicleMarker);
                     }
+                    
                 })
-                let a = vehicleContainer.filter((item, key) => !item.timeout);
-                console.log(a);
+                let asw = vehicleContainer.filter((item, key) => !item.timeout);
+                
+                    
             }
         })
     }
@@ -141,11 +158,11 @@
         map.on("complete", () => {
             console.log("地图加载完成");
             initVehicleList();
-            let marker = new AMap.Marker({
-                icon: "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
-                position: [116.406315, 39.908775],
-                offset: new AMap.Pixel(-13, -30)
-            });
+            // let marker = new AMap.Marker({
+            //     icon: "//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png",
+            //     position: [116.406315, 39.908775],
+            //     offset: new AMap.Pixel(-13, -30)
+            // });
             // marker.setMap(map)
         })
     }

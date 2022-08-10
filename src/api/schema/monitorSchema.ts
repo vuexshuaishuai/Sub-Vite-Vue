@@ -44,13 +44,20 @@ export interface TruckItem {
     systemTime?: number;
     trackLevel?: string;
     utc?: number;
+
     //自定义字段: 车辆状态
     status?: VehicleStatus;
     //自定义字段: 车辆坐标
     cLat?: number;
     cLon?: number;
+    //自定义字段: 车辆坐标(数组)
+    lnglat?: Array<number>, 
     //自定义字段: 车辆是否到期
     timeout?: boolean;
+    community?: string;
+    city?: string;
+    district?: string;
+    area?: string;
 }
 
 //车辆状态
